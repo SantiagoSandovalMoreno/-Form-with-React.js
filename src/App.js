@@ -50,7 +50,7 @@ class App extends Component {
     if (formValid(this.state)) {
      
       const user = this.state
-      fetch("api/v1/usuarios/clientes",
+      fetch("/api/v1/usuarios/clientes",
         {
           method: "POST",
           headers: {
@@ -60,10 +60,10 @@ class App extends Component {
         })
         .then(function (response) { 
           if(response.status === 409){
-            alert('El usuario ya existe en la base de datos')
+            alert('El usuario ya existe en la base de datos');
           }
           if(response.status === 201){
-            alert('Usuario Creado con Exito')
+            alert('Usuario Creado con Exito');
           }
          })
         .catch(function (error) { 
