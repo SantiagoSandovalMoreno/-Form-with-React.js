@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import { spawn } from 'child_process';
 
 const emailRegex = RegExp(
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -24,70 +23,98 @@ class App extends Component {
     super(props);
 
     this.state = {
-      firstName: null,
-      lastName: null,
-      email: null,
-      password: null,
+      Nombre: null,
+      TipoDocumento: null,
+      NumeroDocumento: null,
+      Telefono: null,
+      Ciudad: null,
+      Direccion: null,
+      Email: null,
+      Password: null,
       formErrors: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: ""
+        Nombre: "",
+        TipoDocumento: "",
+        NumeroDocumento: "",
+        Telefono: "",
+        Ciudad: "",
+        Direccion: "",
+        Email: "",
+        Password: ""
       }
     };
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   handleSubmit = e => {
     e.preventDefault();
 
     if (formValid(this.state)) {
-      console.log(
-        `
-          SUBMITTING
-          first name: ${this.state.firstName}
-          last name: ${this.state.lastName}
-          email: ${this.state.email}
-          password: ${this.state.password}
-        `
-      )
+     
+      const user = this.state
+      fetch("api/v1/usuarios/clientes",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(user)
+        })
+        .then(function (response) { 
+          if(response.status === 409){
+            alert('El usuario ya existe en la base de datos')
+          }
+          if(response.status === 201){
+            alert('Usuario Creado con Exito')
+          }
+         })
+        .catch(function (error) { 
+            console.log(error);
+         })
     } else {
       console.log('FORM INVALID - DISPLAY ERROR MESSAGE');
     }
-
   };
-  
-  
 
   handleChange = e => {
     e.preventDefault();
     const { name, value } = e.target;
     let formErrors = this.state.formErrors;
-
-    //console.log("Name:", name);
-    //console.log("Value:", value);
-
     switch (name) {
-      case 'firstName':
-        formErrors.firstName = 
-          value.length < 3 ? "minimum 3 characaters required" : "";
+      case 'Nombre':
+        formErrors.Nombre =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
         break;
-      case 'lastName':
-        formErrors.lastName = 
-          value.length < 3 ? "minimum 3 characaters required" : "";
+      case 'TipoDocumento':
+        formErrors.TipoDocumento =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
         break;
-      case "email":
-        formErrors.email = emailRegex.test(value) ? "" : "invalid email address";
+      case 'NumeroDocumento':
+        formErrors.NumeroDocumento =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
         break;
-      case 'password':
-        formErrors.password = 
-          value.length < 6 ? "minimum 6 characaters required" : "";
+      case 'Telefono':
+        formErrors.Telefono =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
+        break;
+      case 'Ciudad':
+        formErrors.Ciudad =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
+        break;
+      case 'Direccion':
+        formErrors.Direccion =
+          value.length < 3 ? "Se requieren minimo 3 caracteres" : "";
+        break;
+      case "Email":
+        formErrors.Email = emailRegex.test(value) ? "" : "Email invalido";
+        break;
+      case 'Password':
+        formErrors.Password =
+          value.length < 6 ? "Se requieren minimo 6 caracteres" : "";
         break;
       default:
         break;
     }
 
-    this.setState({ formErrors, [name]: value }, () => console.log(this.state));
+    this.setState({ formErrors, [name]: value }, () => console.log(/*this.state*/));
 
   }
 
@@ -96,68 +123,130 @@ class App extends Component {
     return (
       <div className="wrapper">
         <div className="form-wrapper">
-          <h1>Create Account</h1>
+          <h1>Crear una cuenta</h1>
           <form onSubmit={this.handleSubmit} noValidate >
+
             <div className="firstName">
-              <label htmlFor="firstName">First Name</label>
+              <label htmlFor="firstName">Nombre</label>
               <input type="text"
-                className={formErrors.firstName.length > 0 ? "error" : null}
-                placeholder="First Name"
-                name="firstName"
+                className={formErrors.Nombre.length > 0 ? "error" : null}
+                placeholder="Nombre"
+                name="Nombre"
                 noValidate
                 onChange={this.handleChange}
               />
-              {formErrors.firstName.length > 0 && (
-                <span className="errorMessage">{formErrors.firstName}</span>
+              {formErrors.Nombre.length > 0 && (
+                <span className="errorMessage">{formErrors.Nombre}</span>
               )}
             </div>
+
+            <div className="firstName">
+              <label htmlFor="firstName">Tipo de Documento</label>
+              <input type="text"
+                className={formErrors.TipoDocumento.length > 0 ? "error" : null}
+                placeholder="Tipo de Documento"
+                name="TipoDocumento"
+                noValidate
+                onChange={this.handleChange}
+              />
+              {formErrors.TipoDocumento.length > 0 && (
+                <span className="errorMessage">{formErrors.TipoDocumento}</span>
+              )}
+            </div>
+
             <div className="lastName">
-              <label htmlFor="lastName">Last Name</label>
-              <input type="text"
-                className={formErrors.lastName.length > 0 ? "error" : null}
-                placeholder="Last Name"
-                name="lastName"
+              <label htmlFor="lastName">Numero de Documento</label>
+              <input type="number"
+                className={formErrors.NumeroDocumento.length > 0 ? "error" : null}
+                placeholder="Numero de Documento"
+                name="NumeroDocumento"
                 noValidate
                 onChange={this.handleChange}
               />
-              {formErrors.lastName.length > 0 && (
-                <span className="errorMessage">{formErrors.lastName}</span>
+              {formErrors.NumeroDocumento.length > 0 && (
+                <span className="errorMessage">{formErrors.NumeroDocumento}</span>
               )}
             </div>
+
+            <div className="lastName">
+              <label htmlFor="lastName">Telefono</label>
+              <input type="number"
+                className={formErrors.Telefono.length > 0 ? "error" : null}
+                placeholder="Telefono"
+                name="Telefono"
+                noValidate
+                onChange={this.handleChange}
+              />
+              {formErrors.Telefono.length > 0 && (
+                <span className="errorMessage">{formErrors.Telefono}</span>
+              )}
+            </div>
+
+            <div className="lastName">
+              <label htmlFor="lastName">Ciudad</label>
+              <input type="text"
+                className={formErrors.Ciudad.length > 0 ? "error" : null}
+                placeholder="Ciudad"
+                name="Ciudad"
+                noValidate
+                onChange={this.handleChange}
+              />
+              {formErrors.Ciudad.length > 0 && (
+                <span className="errorMessage">{formErrors.Ciudad}</span>
+              )}
+            </div>
+
+            <div className="lastName">
+              <label htmlFor="lastName">Dirección</label>
+              <input type="text"
+                className={formErrors.Direccion.length > 0 ? "error" : null}
+                placeholder="Direccion"
+                name="Direccion"
+                noValidate
+                onChange={this.handleChange}
+              />
+              {formErrors.Direccion.length > 0 && (
+                <span className="errorMessage">{formErrors.Direccion}</span>
+              )}
+            </div>
+
             <div className="email">
               <label htmlFor="email">Email</label>
               <input
-                type="email"
-                className={formErrors.email.length > 0 ? "error" : null}
+                type="Email"
+                className={formErrors.Email.length > 0 ? "error" : null}
                 placeholder="Email"
-                name="email"
+                name="Email"
                 noValidate
                 onChange={this.handleChange}
               />
-              {formErrors.email.length > 0 && (
-                <span className="errorMessage">{formErrors.email}</span>
+              {formErrors.Email.length > 0 && (
+                <span className="errorMessage">{formErrors.Email}</span>
               )}
             </div>
+
             <div className="password">
               <label htmlFor="password">Password</label>
               <input
                 type="password"
-                className={formErrors.password.length > 0 ? "error" : null}
+                className={formErrors.Password.length > 0 ? "error" : null}
                 placeholder="Password"
-                name="password"
+                name="Password"
                 noValidate
                 onChange={this.handleChange}
               />
-              {formErrors.password.length > 0 && (
-                <span className="errorMessage">{formErrors.password}</span>
+              {formErrors.Password.length > 0 && (
+                <span className="errorMessage">{formErrors.Password}</span>
               )}
             </div>
+
             <div className="createAccount">
               <button type="submit">
-                Create Account
+                Crear una cuenta
               </button>
-              <small>Already have a account ?</small>
+              <small>Ya tienes una cuenta ?</small>
             </div>
+
           </form>
         </div>
       </div>
